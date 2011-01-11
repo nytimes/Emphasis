@@ -312,13 +312,15 @@ var Emphasis = {
         if (txt && txt.length>1) {
 
             var lines = this.getSentences(txt);
-            var first = this.cleanArray(lines[0].replace(/[\s\s]+/gi, ' ').split(' ')).slice(0, (len/2));
-            var last  = this.cleanArray(lines[lines.length-1].replace(/[\s\s]+/gi, ' ').split(' ')).slice(0, (len/2));
-            var k     = first.concat(last);
+            if (lines.length>0) {
+                var first = this.cleanArray(lines[0].replace(/[\s\s]+/gi, ' ').split(' ')).slice(0, (len/2));
+                var last  = this.cleanArray(lines[lines.length-1].replace(/[\s\s]+/gi, ' ').split(' ')).slice(0, (len/2));
+                var k     = first.concat(last);
 
-            var max = (k.length>len) ? len : k.length;
-            for (var i=0; i<max; i++) {
-                key += k[i].substring(0, 1);
+                var max = (k.length>len) ? len : k.length;
+                for (var i=0; i<max; i++) {
+                    key += k[i].substring(0, 1);
+                }
             }
         }
         return key;
