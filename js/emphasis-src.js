@@ -258,7 +258,7 @@ var Emphasis = {
                 }
             }
         } else {
-            var spans = document.body.select('span.paragraphInfo');
+            var spans = document.body.select('span.' + this.classInfo);
             var len = spans.length;
             for (var i=0; i<len; i++) {
                 spans[i].remove();
