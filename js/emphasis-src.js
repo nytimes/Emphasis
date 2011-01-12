@@ -73,7 +73,7 @@ var Emphasis = {
 
     readHash: function() {
     /*  Read and interpret the URL hash */
-        var lh = location.hash;
+        var lh = decodeURI(location.hash);
         var p  = false, h = [], s = {};
 
         if (lh.indexOf('[')<0 && lh.indexOf(']')<0) {
