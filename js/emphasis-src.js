@@ -50,8 +50,8 @@ var Emphasis = {
     config: function() {
     /*
         Eligible Paragraphs
-        This uses some common markup for plain and simpel paragraphs - those that are not empty, no classes.
-        We use PrototypeJS for its css selector awesomeness, but your needs might be simpler (getElementsByTagName('p') etc.)
+        This uses some common markup for plain and simple paragraphs - those that are not empty, no classes.
+        We use PrototypeJS for its CSS selector awesomeness, but your needs might be simpler (getElementsByTagName('p') etc.)
     */
         this.paraSelctors      = $$(".entry p:not(p[class]):not(:empty)", ".post p:not(p[class]):not(:empty)", "article p:not(p[class]):not(:empty)");
 
@@ -150,7 +150,7 @@ var Emphasis = {
     },
 
     paragraphList: function() {
-    /*  Build a list of Paragrphs, keys, and add meta-data to each Paragraph in DOM, saves list for later re-use */
+    /*  Build a list of Paragraphs, keys, and add meta-data to each Paragraph in DOM, saves list for later re-use */
         if (this.pl) return this.pl;
         var instance = this;
         var list = [];
@@ -166,7 +166,7 @@ var Emphasis = {
                 keys.push(k);
                 pr.setAttribute("data-key", k); // Unique Key
                 pr.setAttribute("data-num", c); // Order
-                Event.observe(pr, 'click', function(e) { instance.paragraphClick(e); }); // Prefer not doing this for each Paragraph but seemes nesesary
+                Event.observe(pr, 'click', function(e) { instance.paragraphClick(e); }); // Prefer not doing this for each Paragraph but seems necessary
                 c++;
             }
         }
@@ -176,7 +176,7 @@ var Emphasis = {
     },
 
     paragraphClick: function(e) {
-    /*  Clicking a Paragrsph has consequences for Highlighting, selecting and changing active Anchor */
+    /*  Clicking a Paragraph has consequences for Highlighting, selecting and changing active Anchor */
         if (!this.vu) { return; }
 
         var hasChanged = false;
@@ -371,7 +371,7 @@ var Emphasis = {
             var para = this.paragraphList().list[h[i]-1] || false;
             if (para) {
                 var sntns = s[h[i].toString()] || false;
-                var multi = !sntns || sntns.length==0; // Individual sentences, or whole paragraphy?
+                var multi = !sntns || sntns.length==0; // Individual sentences, or whole paragraph?
                 var lines = this.getSentences(para);
                 var jLen  = lines.length;
 
