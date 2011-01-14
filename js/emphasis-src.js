@@ -44,16 +44,18 @@ var Emphasis = {
 
         this.addCSS();
         this.readHash();
-        Event.observe(window, 'keydown', this.keydown);
+        
+        //Event.observe(window, 'keydown', this.keydown);
+        $('window').bind('keydown', this.keydown);
     },
 
     config: function() {
     /*
         Eligible Paragraphs
-        This uses some common markup for plain and simpel paragraphs - those that are not empty, no classes.
+        This uses some common markup for plain and simple paragraphs - those that are not empty, no classes.
         We use PrototypeJS for its css selector awesomeness, but your needs might be simpler (getElementsByTagName('p') etc.)
     */
-        this.paraSelctors      = $$(".entry p:not(p[class]):not(:empty)", ".post p:not(p[class]):not(:empty)", "article p:not(p[class]):not(:empty)");
+        this.paraSelctors      = $('.entry p:not(p[class]):not(:empty)', '.post p:not(p[class]):not(:empty)', 'article p:not(p[class]):not(:empty)');
 
     //  Class names
         this.classReady        = "emReady";
@@ -151,7 +153,9 @@ var Emphasis = {
 
     paragraphList: function() {
     /*  Build a list of Paragrphs, keys, and add meta-data to each Paragraph in DOM, saves list for later re-use */
-        if (this.pl) return this.pl;
+        if (this.pl && this.pl.list.length > 0) {
+          return this.pl;
+        }
         var instance = this;
         var list = [];
         var keys = [];
@@ -166,7 +170,10 @@ var Emphasis = {
                 keys.push(k);
                 pr.setAttribute("data-key", k); // Unique Key
                 pr.setAttribute("data-num", c); // Order
-                Event.observe(pr, 'click', function(e) { instance.paragraphClick(e); }); // Prefer not doing this for each Paragraph but seemes nesesary
+                //Event.observe(pr, 'click', function(e) { instance.paragraphClick(e); }); // Prefer not doing this for each Paragraph but seemes nesesary
+                $(pr).bind('click', function(e) {
+                  instance.paragraphClick(e);
+                });
                 c++;
             }
         }
@@ -186,7 +193,7 @@ var Emphasis = {
 
         if (an) {
         /*  Click an Anchor link */
-            if (!an.hasClassName(this.classActiveAnchor)) {
+            if (!$(an).hasClass(this.classActiveAnchor)) {
                 this.updateAnchor(an);
                 hasChanged = true;
                 e.preventDefault();
@@ -194,23 +201,23 @@ var Emphasis = {
         }
 
         if (!pr && !sp) {
-            this.removeAllClasses("p", this.classActive);
+            this.removeClass(this.classActive);
             return;
         }
 
-        if (pr.hasClassName(this.classReady)) {
-            if (!pr.hasClassName(this.classActive) && (sp && !sp.hasClassName(this.classHighlight))) {
+        if ($(pr).hasClass(this.classReady)) {
+            if (!$(pr).hasClass(this.classActive) && (sp && !$(sp).hasClass(this.classHighlight))) {
             //  If not current Active p tag, clear any others out there and make this the Active p tag
-                this.removeAllClasses("p", this.classActive);
-                pr.addClassName(this.classActive); // Mark as Active
+                $(this).removeClass(this.classActive);
+                $(pr).addClass(this.classActive); // Mark as Active
             } else {
-                if (!pr.hasClassName(this.classActive)) {
-                    this.removeAllClasses("p", this.classActive);
+                if (!$(pr).hasClass(this.classActive)) {
+                    $(this).removeClass(this.classActive);
                     pr.addClassName(this.classActive); // Mark as Active
                 }
 
                 if (sp) {
-                    sp.toggleClassName(this.classHighlight);
+                    $(sp).toggleClass(this.classHighlight);
                     hasChanged = true;
                 }
             }
@@ -230,9 +237,9 @@ var Emphasis = {
             pr.innerHTML = txt;
             pr.setAttribute('data-sentences', jLen);
 
-            this.removeAllClasses("p", this.classActive);
-            pr.addClassName(this.classActive); // Mark as Active
-            pr.addClassName(this.classReady);  // Mark as Ready
+            $(this).removeClass(this.classActive);
+            $(pr).addClass(this.classActive); // Mark as Active
+            $(pr).addClass(this.classReady);  // Mark as Ready
             hasChanged = true;
         }
 
@@ -244,8 +251,9 @@ var Emphasis = {
     paragraphInfo: function(mode) {
     /*  Toggle anchor links next to Paragraphs */
         if (mode) {
-            var hasSpan = (document.body.select('span.' + this.classInfo)[0]) ? true : false;
-            if (!hasSpan) {
+            //var hasSpan = (document.body.select('span.' + this.classInfo)[0]) ? true : false;  @?
+            var hasSpan = $('span.' + this.classInfo);
+            if (hasSpan.length > 0) {
                 var pl  = this.paragraphList();
                 var len = pl.list.length;
                 for (var i=0; i<len; i++) {
@@ -258,31 +266,33 @@ var Emphasis = {
                 }
             }
         } else {
-            var spans = document.body.select('span.' + this.classInfo);
+            //var spans = document.body.select('span.' + this.classInfo);
+            var spans = $('span.' + this.classInfo);
+
             var len = spans.length;
             for (var i=0; i<len; i++) {
                 spans[i].remove();
             }
-            this.removeAllClasses(this.classActive);
+            $(this).removeClass(this.classActive);
         }
     },
 
     updateAnchor: function(an) {
     /*  Make this A tag the one and only Anchor */
         this.p = an.getAttribute("data-key");
-        this.removeAllClasses("a", this.classActiveAnchor);
-        an.addClassName(this.classActiveAnchor);
+        $(this).removeClass(this.classActiveAnchor);
+        $(an).addClass(this.classActiveAnchor);
     },
 
     updateURLHash: function() {
     /*  Scan the Paragraphs, note selections, highlights and update the URL with the new Hash */
         var h     = "h[";
-        var paras = $$('p.emReady');
+        var paras = $('p.emReady');
         var pLen  = paras.length;
 
-        for (var p=0; p<pLen; p++) {
+        for (var p=0; p < pLen; p++) {
             var key = paras[p].getAttribute("data-key");
-            if (paras[p].hasClassName(this.classHighlight)) {
+            if ($(paras[p]).hasClass(this.classHighlight)) {
                 h += "," + key; // Highlight full paragraph
             } else {
                 var spans = paras[p].select('span.' + this.classHighlight);
@@ -357,7 +367,8 @@ var Emphasis = {
         var instance = this;
         if (pg) {
             setTimeout(function(){
-                pg.scrollTo();
+                //pg.scrollTo();
+                $(window).scrollTop($(pg).offset().top);
             }, 500);
         }
     },
@@ -392,7 +403,7 @@ var Emphasis = {
 
                 para.setAttribute("data-sentences", jLen);
                 para.innerHTML = lines.join('. ').replace(/__DOT__/g, ".").replace(/<\/span>\./g, ".<\/span>");
-                para.addClassName('emReady'); /* Mark the paragraph as having SPANs */
+                $(para).addClass('emReady'); /* Mark the paragraph as having SPANs */
             }
         }
     },
@@ -473,15 +484,10 @@ var Emphasis = {
         return n;
     },
 
-    removeAllClasses: function(tag, klass) {
-    /*  Remove classes */
-        if (!klass || !tag) return;
-        var els = $$((tag + "." + klass));
-        for (var i=0; i<els.length; i++){
-            els[i].removeClassName(klass);
-        }
-    }
 };
 
-Event.observe(window, 'load', function(){ Emphasis.init(); });
+$(window).bind('load', function() {
+  Emphasis.init(); 
+});
+
 })();
