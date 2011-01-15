@@ -31,9 +31,10 @@
 
     -------------------------------------------------- */
 
-(function() {
+$(function() {
 var Emphasis = {
     init: function() {
+        var that = this;
         this.config();
         this.pl = false; // Paragraph List
         this.p  = false; // Paragraph Anchor
@@ -45,8 +46,7 @@ var Emphasis = {
         this.addCSS();
         this.readHash();
         
-        //Event.observe(window, 'keydown', this.keydown);
-        $('window').bind('keydown', this.keydown);
+        $(document).bind('keydown', this.keydown);                
     },
 
     config: function() {
@@ -55,7 +55,7 @@ var Emphasis = {
         This uses some common markup for plain and simple paragraphs - those that are not empty, no classes.
         We use PrototypeJS for its css selector awesomeness, but your needs might be simpler (getElementsByTagName('p') etc.)
     */
-        this.paraSelctors      = $('.entry p:not(p[class]):not(:empty)', '.post p:not(p[class]):not(:empty)', 'article p:not(p[class]):not(:empty)');
+        this.paraSelctors      = $('p');
 
     //  Class names
         this.classReady        = "emReady";
@@ -170,7 +170,7 @@ var Emphasis = {
                 keys.push(k);
                 pr.setAttribute("data-key", k); // Unique Key
                 pr.setAttribute("data-num", c); // Order
-                //Event.observe(pr, 'click', function(e) { instance.paragraphClick(e); }); // Prefer not doing this for each Paragraph but seemes nesesary
+
                 $(pr).bind('click', function(e) {
                   instance.paragraphClick(e);
                 });
@@ -253,7 +253,7 @@ var Emphasis = {
         if (mode) {
             //var hasSpan = (document.body.select('span.' + this.classInfo)[0]) ? true : false;  @?
             var hasSpan = $('span.' + this.classInfo);
-            if (hasSpan.length > 0) {
+            if (!hasSpan.length > 0) {
                 var pl  = this.paragraphList();
                 var len = pl.list.length;
                 for (var i=0; i<len; i++) {
@@ -271,7 +271,7 @@ var Emphasis = {
 
             var len = spans.length;
             for (var i=0; i<len; i++) {
-                spans[i].remove();
+                $(spans[i]).remove();
             }
             $(this).removeClass(this.classActive);
         }
@@ -295,7 +295,7 @@ var Emphasis = {
             if ($(paras[p]).hasClass(this.classHighlight)) {
                 h += "," + key; // Highlight full paragraph
             } else {
-                var spans = paras[p].select('span.' + this.classHighlight);
+                var spans = $('span.' + this.classHighlight, paras[p]);
                 var sLen  = spans.length;
                 var nSent = paras[p].getAttribute("data-sentences");
 
@@ -367,7 +367,6 @@ var Emphasis = {
         var instance = this;
         if (pg) {
             setTimeout(function(){
-                //pg.scrollTo();
                 $(window).scrollTop($(pg).offset().top);
             }, 500);
         }
@@ -487,7 +486,7 @@ var Emphasis = {
 };
 
 $(window).bind('load', function() {
-  Emphasis.init(); 
+  Emphasis.init();  
 });
 
-})();
+});
