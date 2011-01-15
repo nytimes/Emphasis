@@ -34,7 +34,6 @@
 $(function() {
 var Emphasis = {
     init: function() {
-        var that = this;
         this.config();
         this.pl = false; // Paragraph List
         this.p  = false; // Paragraph Anchor
@@ -75,26 +74,30 @@ var Emphasis = {
 
     readHash: function() {
     /*  Read and interpret the URL hash */
-        var lh = decodeURI(location.hash);
-        var p  = false, h = [], s = {};
+        var lh = decodeURI(location.hash),
+          p  = false,
+          h = [],
+          s = {},
+          a, re, f, r, i, findp, findh, undef, hi, key, pos, b, j;
+          
 
         if (lh.indexOf('[')<0 && lh.indexOf(']')<0) {
         /*  Version 1 Legacy support
             #p20h4s2,6,10,h6s5,1 -> p = 20, h = [ 4, 6 ], s = { "4": [ 2, 6, 10 ] , "6": [ 5, 1 ] }
         */
-            var a, re = /[ph][0-9]+|s[0-9,]+|[0-9]/g;
+            re = /[ph][0-9]+|s[0-9,]+|[0-9]/g;
             if (lh) {
                 while ((a = re.exec(lh)) !== null) {
-                    var f = a[0].substring(0, 1);
-                    var r = a[0].substring(1);
-                    if (f == 'p') {
-                        p = parseInt(r);
-                    } else if (f == 'h') {
-                        h.push(parseInt(r));
+                    f = a[0].substring(0, 1);
+                    r = a[0].substring(1);
+                    if (f === 'p') {
+                        p = parseInt(r, 10);
+                    } else if (f === 'h') {
+                        h.push(parseInt(r, 10));
                     } else {
                         a = r.split(',');
-                        for (var i = 0; i < a.length; i++) {
-                            a[i] = parseInt(a[i]);
+                        for (i = 0; i < a.length; i++) {
+                            a[i] = parseInt(a[i], 10);
                         }
                         s[h[h.length - 1]] = a;
                     }
@@ -104,27 +107,26 @@ var Emphasis = {
         /*  Version 2
             #h[tbsaoa,Sstaoo,2,4],p[FWaadw] -> p = "FWaadw", h = [ "tbsaoa", "Sstaoo" ], s = { "Sstaoo" : [ 2, 4 ] }
         */
-            var findp = lh.match(/p\[([^[\]]*)\]/);
-            var findh = lh.match(/h\[([^[\]]*)\]/);
-            var undef, hi;
+            findp = lh.match(/p\[([^[\]]*)\]/);
+            findh = lh.match(/h\[([^[\]]*)\]/);
 
             p  = (findp && findp.length>0) ? findp[1] : false;
             hi = (findh && findh.length>0) ? findh[1] : false;
 
             if (hi) {
                 hi = hi.match(/[a-zA-Z]+(,[0-9]+)*/g);
-                for (var i = 0; i < hi.length; i++) {
-                    var a   = hi[i].split(',');
-                    var key = a[0];
-                    var pos = this.findKey(key)['index'];
+                for (i = 0; i < hi.length; i++) {
+                    a   = hi[i].split(',');
+                    key = a[0];
+                    pos = this.findKey(key).index;
 
-                    if (pos!=undef) {
-                        h.push(parseInt(pos)+1);
-                        var b = a;
+                    if (pos !== undef) {
+                        h.push(parseInt(pos, 10)+1);
+                        b = a;
                         b.shift();
                         if (b.length>0) {
-                            for (var j=1; j<b.length; j++) {
-                                b[j] = parseInt(b[j]);
+                            for (j=1; j<b.length; j++) {
+                                b[j] = parseInt(b[j], 10);
                             }
                         }
                         s[h[h.length - 1]] = b;
@@ -141,8 +143,9 @@ var Emphasis = {
 
     keydown: function(e){
     /*  Look for double-shift keypress */
-        var self = Emphasis;
-        var kc   = e.keyCode;
+        var self = Emphasis,
+          kc = e.keyCode;
+        
         self.kh  = self.kh + kc + '|';
         if (self.kh.indexOf('|16|16|')>-1) {
             self.vu = (self.vu) ? false : true;
@@ -156,16 +159,17 @@ var Emphasis = {
         if (this.pl && this.pl.list.length > 0) {
           return this.pl;
         }
-        var instance = this;
-        var list = [];
-        var keys = [];
-        var c    = 0;
-        var len  = this.paraSelctors.length;
+        var instance = this,
+          list = [],
+          keys = [],
+          c    = 0,
+          len  = this.paraSelctors.length,
+          p, pr, k;
 
-        for (var p=0; p<len; p++) {
-            var pr = this.paraSelctors[p];
+        for (p=0; p<len; p++) {
+            pr = this.paraSelctors[p];
             if ((pr.innerText || pr.textContent || "").length>0) {
-                var k = instance.createKey(pr);
+                k = instance.createKey(pr);
                 list.push(pr);
                 keys.push(k);
                 pr.setAttribute("data-key", k); // Unique Key
@@ -186,10 +190,11 @@ var Emphasis = {
     /*  Clicking a Paragrsph has consequences for Highlighting, selecting and changing active Anchor */
         if (!this.vu) { return; }
 
-        var hasChanged = false;
-        var pr = (e.currentTarget.nodeName=="P") ? e.currentTarget : false; // Paragraph
-        var sp = (e.target.nodeName=="SPAN")     ? e.target        : false; // Span
-        var an = (e.target.nodeName=="A")        ? e.target        : false; // Anchor
+        var hasChanged = false,
+          pr = (e.currentTarget.nodeName === "P") ? e.currentTarget : false, // Paragraph
+          sp = (e.target.nodeName === "SPAN")     ? e.target        : false, // Span
+          an = (e.target.nodeName === "A")        ? e.target        : false, // Anchor
+          lines, jLen, j, txt, chr;
 
         if (an) {
         /*  Click an Anchor link */
@@ -223,16 +228,16 @@ var Emphasis = {
             }
         } else {
         //  Add span tags to all Sentences within Paragraph and mark Paragraph as Ready
-            var lines = this.getSentences(pr);
-            var jLen  = lines.length;
+            lines = this.getSentences(pr);
+            jLen  = lines.length;
 
-            for (var j=0; j<jLen; j++) {
+            for (j=0; j<jLen; j++) {
                 lines[j] = "<span data-num='" + (j+1) + "'>" + this.rtrim(lines[j]) + "</span>";
             }
 
-            var txt = lines.join('. ').replace(/__DOT__/g, ".").replace(/<\/span>\./g, ".<\/span>");
-            var chr = txt.substring(txt.length-8).charCodeAt(0);
-            if ("|8221|63|46|41|39|37|34|33|".indexOf(chr)==-1) { txt += "."; }
+            txt = lines.join('. ').replace(/__DOT__/g, ".").replace(/<\/span>\./g, ".<\/span>");
+            chr = txt.substring(txt.length-8).charCodeAt(0);
+            if ("|8221|63|46|41|39|37|34|33|".indexOf(chr) === -1) { txt += "."; }
 
             pr.innerHTML = txt;
             pr.setAttribute('data-sentences', jLen);
@@ -250,27 +255,27 @@ var Emphasis = {
 
     paragraphInfo: function(mode) {
     /*  Toggle anchor links next to Paragraphs */
+      var hasSpan, pl, len, i, para, key, isActive, spans;
+      
         if (mode) {
-            //var hasSpan = (document.body.select('span.' + this.classInfo)[0]) ? true : false;  @?
-            var hasSpan = $('span.' + this.classInfo);
-            if (!hasSpan.length > 0) {
-                var pl  = this.paragraphList();
-                var len = pl.list.length;
-                for (var i=0; i<len; i++) {
-                    var para = pl.list[i] || false;
+            hasSpan = $('span.' + this.classInfo);
+            if (hasSpan.length === 0) {
+                pl  = this.paragraphList();
+                len = pl.list.length;
+                for (i=0; i<len; i++) {
+                    para = pl.list[i] || false;
                     if (para) {
-                        var key        = pl.keys[i];
-                        var isActive   = (key==this.p) ? (" " + this.classActiveAnchor) : "";
+                        key        = pl.keys[i];
+                        isActive   = (key===this.p) ? (" " + this.classActiveAnchor) : "";
                         para.innerHTML = "<span class='" + this.classInfo + "'><a class='"+ this.classAnchor + isActive + "' href='#p[" + key + "]' data-key='" + key + "' title='Link to " + this.ordinal(i+1) + " paragraph'>&para;</a></span>" + para.innerHTML;
                     }
                 }
             }
         } else {
-            //var spans = document.body.select('span.' + this.classInfo);
-            var spans = $('span.' + this.classInfo);
+            spans = $('span.' + this.classInfo);
 
-            var len = spans.length;
-            for (var i=0; i<len; i++) {
+            len = spans.length;
+            for (i=0; i<len; i++) {
                 $(spans[i]).remove();
             }
             $(this).removeClass(this.classActive);
@@ -286,49 +291,52 @@ var Emphasis = {
 
     updateURLHash: function() {
     /*  Scan the Paragraphs, note selections, highlights and update the URL with the new Hash */
-        var h     = "h[";
-        var paras = $('p.emReady');
-        var pLen  = paras.length;
+        var h     = "h[",
+          paras = $('p.emReady'),
+          pLen  = paras.length,
+          p, key, spans, sLen, nSent, anchor, hash,s;
 
-        for (var p=0; p < pLen; p++) {
-            var key = paras[p].getAttribute("data-key");
+        for (p=0; p < pLen; p++) {
+            key = paras[p].getAttribute("data-key");
             if ($(paras[p]).hasClass(this.classHighlight)) {
                 h += "," + key; // Highlight full paragraph
             } else {
-                var spans = $('span.' + this.classHighlight, paras[p]);
-                var sLen  = spans.length;
-                var nSent = paras[p].getAttribute("data-sentences");
+                spans = $('span.' + this.classHighlight, paras[p]);
+                sLen  = spans.length;
+                nSent = paras[p].getAttribute("data-sentences");
 
                 if (sLen>0) { h += "," + key; }
 
-                if (nSent!=sLen) {
-                    for (var s=0; s<sLen; s++) {
+                if (nSent!==sLen) {
+                    for (s=0; s<sLen; s++) {
                         h += "," + spans[s].getAttribute("data-num");
                     }
                 }
             }
         }
 
-        var anchor    = ((this.p) ? "p[" + this.p + "]," : "");
-        var hash      = (anchor + (h.replace("h[,", "h[") + "]")).replace(",h[]", "");
+        anchor    = ((this.p) ? "p[" + this.p + "]," : "");
+        hash      = (anchor + (h.replace("h[,", "h[") + "]")).replace(",h[]", "");
         location.hash = hash;
     },
 
     createKey: function(p) {
     /*  From a Paragraph, generate a Key */
-        var key = "";
-        var len = 6;
-        var txt = (p.innerText || p.textContent || '').replace(/[^a-z\. ]+/gi, '');
+        var key = "",
+          len = 6,
+          txt = (p.innerText || p.textContent || '').replace(/[^a-z\. ]+/gi, ''),
+          lines, first, last, k, max, i;
+        
         if (txt && txt.length>1) {
 
-            var lines = this.getSentences(txt);
+            lines = this.getSentences(txt);
             if (lines.length>0) {
-                var first = this.cleanArray(lines[0].replace(/[\s\s]+/gi, ' ').split(' ')).slice(0, (len/2));
-                var last  = this.cleanArray(lines[lines.length-1].replace(/[\s\s]+/gi, ' ').split(' ')).slice(0, (len/2));
-                var k     = first.concat(last);
+                first = this.cleanArray(lines[0].replace(/[\s\s]+/gi, ' ').split(' ')).slice(0, (len/2));
+                last  = this.cleanArray(lines[lines.length-1].replace(/[\s\s]+/gi, ' ').split(' ')).slice(0, (len/2));
+                k     = first.concat(last);
 
-                var max = (k.length>len) ? len : k.length;
-                for (var i=0; i<max; i++) {
+                max = (k.length>len) ? len : k.length;
+                for (i=0; i<max; i++) {
                     key += k[i].substring(0, 1);
                 }
             }
@@ -338,18 +346,19 @@ var Emphasis = {
 
     findKey: function(key) {
     /*  From a list of Keys, locate the Key and corresponding Paragraph */
-        var pl = this.paragraphList();
-        var ln = pl.keys.length;
-        var ix = false;
-        var el = false;
+        var pl = this.paragraphList(),
+          ln = pl.keys.length,
+          ix = false,
+          el = false,
+          i, ls, le;
 
-        for (var i=0;i<ln;i++) {
-            if (key==pl.keys[i]) { // Direct Match
+        for (i=0;i<ln;i++) {
+            if (key===pl.keys[i]) { // Direct Match
                 return { index: i, elm: pl.list[i] };
             } else { // Look for 1st closest Match
                 if (!ix) {
-                    var ls = this.lev(key.slice(0, 3), pl.keys[i].slice(0, 3));
-                    var le = this.lev(key.slice(-3)  , pl.keys[i].slice(-3));
+                      ls = this.lev(key.slice(0, 3), pl.keys[i].slice(0, 3));
+                      le = this.lev(key.slice(-3)  , pl.keys[i].slice(-3));
                     if ((ls+le)<3) {
                         ix = i;
                         el = pl.list[i];
@@ -362,9 +371,11 @@ var Emphasis = {
 
     goAnchor: function(p) {
     /*  Move view to top of a given Paragraph */
-        if (!p) return;
+        if (!p) {
+          return; 
+        }
         var pg = (isNaN(p)) ? this.findKey(p)['elm'] : (this.paragraphList().list[p-1] || false);
-        var instance = this;
+        
         if (pg) {
             setTimeout(function(){
                 $(window).scrollTop($(pg).offset().top);
@@ -374,27 +385,30 @@ var Emphasis = {
 
     goHighlight: function(h, s) {
     /*  Highlight a Paragraph, or specific Sentences within it */
-        if (!h) return;
-        var hLen = h.length;
+        if (!h) {
+          return;
+        }
+        var hLen = h.length,
+          i, para, sntns, multi, lines, jLen, j, k, line;
 
-        for (var i=0; i<hLen; i++) {
-            var para = this.paragraphList().list[h[i]-1] || false;
+        for (i=0; i<hLen; i++) {
+            para = this.paragraphList().list[h[i]-1] || false;
             if (para) {
-                var sntns = s[h[i].toString()] || false;
-                var multi = !sntns || sntns.length==0; // Individual sentences, or whole paragraphy?
-                var lines = this.getSentences(para);
-                var jLen  = lines.length;
+                sntns = s[h[i].toString()] || false;
+                multi = !sntns || sntns.length===0; // Individual sentences, or whole paragraphy?
+                lines = this.getSentences(para);
+                jLen  = lines.length;
 
             /*  First pass. Add SPAN tags to all lines. */
-                for (var j=0; j<jLen; j++) {
-                    var k = (multi) ? j : sntns[j]-1;
+                for (j=0; j<jLen; j++) {
+                    k = (multi) ? j : sntns[j]-1;
                     lines[j] = "<span data-num='" + (j+1) + "'>" + lines[j] + "</span>";
                 }
 
             /*  Second pass, update span to Highlight selected lines */
-                for (var j=0; j<jLen; j++) {
-                    var k    = (multi) ? j : sntns[j]-1;
-                    var line = lines[k] || false;
+                for (j=0; j<jLen; j++) {
+                    k    = (multi) ? j : sntns[j]-1;
+                    line = lines[k] || false;
                     if (line) {
                         lines[k] = lines[k].replace("<span", "<span class='" + this.classHighlight + "'");
                     }
@@ -409,54 +423,61 @@ var Emphasis = {
 
     getSentences: function(el) {
     /*  Break a Paragraph into Sentences, bearing in mind that the "." is not the definitive way to do so */
-        var html    = (typeof el=="string") ? el : el.innerHTML;
-        var mrsList = "Mr,Ms,Mrs,Miss,Msr,Dr,Gov,Pres,Sen,Prof,Gen,Rep,St,Messrs,Col,Sr,Jf,Ph,Sgt,Mgr,Fr,Rev,No,Jr,Snr";
-        var topList = "A,B,C,D,E,F,G,H,I,J,K,L,M,m,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,etc,oz,cf,viz,sc,ca,Ave,St";
-        var geoList = "Calif,Mass,Penn,AK,AL,AR,AS,AZ,CA,CO,CT,DC,DE,FL,FM,GA,GU,HI,IA,ID,IL,IN,KS,KY,LA,MA,MD,ME,MH,MI,MN,MO,MP,MS,MT,NC,ND,NE,NH,NJ,NM,NV,NY,OH,OK,OR,PA,PR,PW,RI,SC,SD,TN,TX,UT,VA,VI,VT,WA,WI,WV,WY,AE,AA,AP,NYC,GB,IRL,IE,UK,GB,FR";
-        var numList = "0,1,2,3,4,5,6,7,8,9";
-        var webList = "aero,asia,biz,cat,com,coop,edu,gov,info,int,jobs,mil,mobi,museum,name,net,org,pro,tel,travel,xxx";
-        var extList = "www";
-        var d       = "__DOT__";
+        var html    = (typeof el==="string") ? el : el.innerHTML,
+          mrsList = "Mr,Ms,Mrs,Miss,Msr,Dr,Gov,Pres,Sen,Prof,Gen,Rep,St,Messrs,Col,Sr,Jf,Ph,Sgt,Mgr,Fr,Rev,No,Jr,Snr",
+          topList = "A,B,C,D,E,F,G,H,I,J,K,L,M,m,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,etc,oz,cf,viz,sc,ca,Ave,St",
+          geoList = "Calif,Mass,Penn,AK,AL,AR,AS,AZ,CA,CO,CT,DC,DE,FL,FM,GA,GU,HI,IA,ID,IL,IN,KS,KY,LA,MA,MD,ME,MH,MI,MN,MO,MP,MS,MT,NC,ND,NE,NH,NJ,NM,NV,NY,OH,OK,OR,PA,PR,PW,RI,SC,SD,TN,TX,UT,VA,VI,VT,WA,WI,WV,WY,AE,AA,AP,NYC,GB,IRL,IE,UK,GB,FR",
+          numList = "0,1,2,3,4,5,6,7,8,9",
+          webList = "aero,asia,biz,cat,com,coop,edu,gov,info,int,jobs,mil,mobi,museum,name,net,org,pro,tel,travel,xxx",
+          extList = "www",
+          d       = "__DOT__",
 
-        var list = (topList+","+geoList+","+numList+","+extList).split(",");
-        var len  = list.length;
-        for (var i=0;i<len;i++) {
+          list = (topList+","+geoList+","+numList+","+extList).split(","),
+          len  = list.length,
+          i, lines;
+        
+        for (i=0;i<len;i++) {
             html = html.replace(new RegExp((" "+list[i]+"\\."), "g"), (" "+list[i]+d));
         }
 
         list = (mrsList+","+numList).split(",");
         len  = list.length;
-        for (var i=0;i<len;i++) {
+        for (i=0;i<len;i++) {
             html = html.replace(new RegExp((list[i]+"\\."), "g"), (list[i]+d));
         }
 
         list = (webList).split(",");
         len  = list.length;
-        for (var i=0;i<len;i++) {
+        for (i=0;i<len;i++) {
             html = html.replace(new RegExp(("\\."+list[i]), "g"), (d+list[i]));
         }
 
-        var lines = this.cleanArray(html.split('. '));
+        lines = this.cleanArray(html.split('. '));
         return lines;
     },
 
     ordinal: function(n) {
-        var sfx = ["th","st","nd","rd"], val = n%100;
+        var sfx = ["th","st","nd","rd"], 
+          val = n%100;
         return n + (sfx[(val-20)%10] || sfx[val] || sfx[0]);
     },
 
     lev: function(a, b) {
     /*  Get the Levenshtein distance - a measure of difference between two sequences */
-        var m = a.length;
-        var n = b.length;
-        var r = []; r[0] = [];
-        if (m < n) { var c = a; a = b; b = c; var o = m; m = n; n = o; }
-        for (var c = 0; c < n+1; c++) { r[0][c] = c; }
-        for (var i = 1; i < m+1; i++) {
+        var m = a.length,
+          n = b.length,
+          r = [],
+          c, o, i, j;
+          
+          r[0] = [];
+        
+        if (m < n) { c = a; a = b; b = c; o = m; m = n; n = o; }
+        for (c = 0; c < n+1; c++) { r[0][c] = c; }
+        for (i = 1; i < m+1; i++) {
             r[i] = [];
             r[i][0] = i;
-            for (var j=1; j<n+1; j++) {
-                r[i][j] = this.smallest(r[i-1][j]+1, r[i][j-1]+1, r[i-1][j-1]+((a.charAt(i-1)==b.charAt(j-1))? 0 : 1));
+            for (j=1; j<n+1; j++) {
+                r[i][j] = this.smallest(r[i-1][j]+1, r[i][j-1]+1, r[i-1][j-1]+((a.charAt(i-1)===b.charAt(j-1))? 0 : 1));
             }
         }
         return r[m][n];
@@ -464,8 +485,8 @@ var Emphasis = {
 
     smallest: function(x,y,z) {
     /*  Return smallest of two values */
-        if (x < y && x < z) return x;
-        if (y < x && y < z) return y;
+        if (x < y && x < z) { return x; }
+        if (y < x && y < z) { return y; }
         return z;
     },
 
@@ -476,12 +497,13 @@ var Emphasis = {
 
     cleanArray: function(a){
     /*  Remove empty items from an array */
-        var n = [];
-        for (var i = 0; i<a.length; i++){
+        var n = [],
+          i;
+        for (i = 0; i<a.length; i++){
             if (a[i] && a[i].replace(/ /g,'').length>0){ n.push(a[i]); }
         }
         return n;
-    },
+    }
 
 };
 
