@@ -1,7 +1,7 @@
 Prologue
 ========
 
-This is a jQuery-friendly version of the NYT's Emphasis script. It lets you drop the PrototypeJS dependency for jQuery.
+This is a jQueryized version of the NYT's PrototypeJS-dependant Emphasis script.
 
 Emphasis
 ========

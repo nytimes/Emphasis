@@ -4,8 +4,11 @@
     by Michael Donohoe (@donohoe)
     https://github.com/NYTimes/Emphasis
     http://open.blogs.nytimes.com/2011/01/10/emphasis-update-and-source/
+    
+    - - - - - - - - - -
 
-    Requires PrototypeJS library (http://prototypejs.org/download)
+    jQueryized by Rob Flaherty (@ravelrumba)
+    https://github.com/robflaherty/Emphasis
 
     - - - - - - - - - -
 
@@ -54,7 +57,7 @@ var Emphasis = {
         This uses some common markup for plain and simple paragraphs - those that are not empty, no classes.
         We use PrototypeJS for its css selector awesomeness, but your needs might be simpler (getElementsByTagName('p') etc.)
     */
-        this.paraSelctors      = $('p');
+        this.paraSelctors      = $('#article-content p');
 
     //  Class names
         this.classReady        = "emReady";
@@ -192,6 +195,7 @@ var Emphasis = {
 
         var hasChanged = false,
           pr = (e.currentTarget.nodeName === "P") ? e.currentTarget : false, // Paragraph
+          $pr = $(pr),
           sp = (e.target.nodeName === "SPAN")     ? e.target        : false, // Span
           an = (e.target.nodeName === "A")        ? e.target        : false, // Anchor
           lines, jLen, j, txt, chr;
@@ -210,13 +214,13 @@ var Emphasis = {
             return;
         }
 
-        if ($(pr).hasClass(this.classReady)) {
-            if (!$(pr).hasClass(this.classActive) && (sp && !$(sp).hasClass(this.classHighlight))) {
+        if ($pr.hasClass(this.classReady)) {
+            if (!$pr.hasClass(this.classActive) && (sp && !$(sp).hasClass(this.classHighlight))) {
             //  If not current Active p tag, clear any others out there and make this the Active p tag
                 $(this).removeClass(this.classActive);
-                $(pr).addClass(this.classActive); // Mark as Active
+                $pr.addClass(this.classActive); // Mark as Active
             } else {
-                if (!$(pr).hasClass(this.classActive)) {
+                if (!$pr.hasClass(this.classActive)) {
                     $(this).removeClass(this.classActive);
                     pr.addClassName(this.classActive); // Mark as Active
                 }
@@ -243,8 +247,8 @@ var Emphasis = {
             pr.setAttribute('data-sentences', jLen);
 
             $(this).removeClass(this.classActive);
-            $(pr).addClass(this.classActive); // Mark as Active
-            $(pr).addClass(this.classReady);  // Mark as Ready
+            $pr.addClass(this.classActive); // Mark as Active
+            $pr.addClass(this.classReady);  // Mark as Ready
             hasChanged = true;
         }
 
