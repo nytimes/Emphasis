@@ -37,7 +37,7 @@ Over at The New York Times, we use the following:
 
 Dependencies
 ------------
-<strike>Currently this requires that you use the PrototypeJS library - tested with version 1.6.</strike>
+<del>Currently this requires that you use the PrototypeJS library - tested with version 1.6.</del>
 
 jQuery (Tested with 1.4.4)
 
