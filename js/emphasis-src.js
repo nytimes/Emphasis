@@ -222,7 +222,7 @@ var Emphasis = {
             } else {
                 if (!$pr.hasClass(this.classActive)) {
                     $(this).removeClass(this.classActive);
-                    pr.addClassName(this.classActive); // Mark as Active
+                    $pr.addClass(this.classActive); // Mark as Active
                 }
 
                 if (sp) {
