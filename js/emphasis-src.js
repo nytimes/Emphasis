@@ -34,7 +34,7 @@
 
     -------------------------------------------------- */
 
-$(function() {
+jQuery(function($) {
 var Emphasis = {
     init: function() {
         this.config();
