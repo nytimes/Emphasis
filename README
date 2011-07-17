@@ -11,7 +11,7 @@ http://open.blogs.nytimes.com/2011/01/11/emphasis-update-and-source/
 Configuration
 -------------
 
-The main configuration element si specifiying what paragraph elements are in scope and are not. To this end
+The main configuration element is specifiying what paragraph elements are in scope and are not. To this end
 we specify the elements on or near Line 54:
 
     this.paraSelctors = $$(
