@@ -1,3 +1,8 @@
+Prologue
+========
+
+This is a jQueryized version of the NYT's PrototypeJS-dependant Emphasis script.
+
 Emphasis
 ========
 
@@ -32,9 +37,9 @@ Over at The New York Times, we use the following:
 
 Dependencies
 ------------
-Currently this requires that you use the PrototypeJS library - tested with version 1.6.
+<del>Currently this requires that you use the PrototypeJS library - tested with version 1.6.</del>
 
-http://prototypejs.org/download
+jQuery (Tested with 1.4.4)
 
 Thanks
 ------
