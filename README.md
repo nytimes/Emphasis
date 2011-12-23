@@ -1,7 +1,7 @@
 Prologue
 ========
 
-This is a jQueryized version of the NYT's PrototypeJS-dependant Emphasis script.
+Emphasis, with patient help, has moved from its dependency on PrototypeJS to jQuery.
 
 Emphasis
 ========
@@ -37,7 +37,6 @@ Over at The New York Times, we use the following:
 
 Dependencies
 ------------
-<del>Currently this requires that you use the PrototypeJS library - tested with version 1.6.</del>
 
 jQuery (Tested with 1.4.4)
 
@@ -50,7 +49,6 @@ http://andrew.hedges.name/experiments/levenshtein/
 To-Do
 -----
 
- - Remove framework dependency (PrototypeJS)
  - Further work on UI for highlighting with focus on simplicity
  - Social
  - Support for touch-based devices
