@@ -16,7 +16,7 @@ http://open.blogs.nytimes.com/2011/01/11/emphasis-update-and-source/
 Configuration
 -------------
 
-The main configuration element si specifiying what paragraph elements are in scope and are not. To this end
+The main configuration element is specifiying what paragraph elements are in scope and are not. To this end
 we specify the elements on or near Line 54:
 
     this.paraSelctors = $$(
@@ -27,7 +27,7 @@ we specify the elements on or near Line 54:
 
 This covers a lot of common markup in many sites and blog. However this could be configured for your specific site.
 
-Example: If all you P tags reside in DIV tags with the "entry" classname, then this would be sufficient:
+Example: If all your P tags reside in DIV tags with the "entry" classname, then this would be sufficient:
 
     this.paraSelctors = $$(".entry p:not(p[class]):not(:empty)");
 
