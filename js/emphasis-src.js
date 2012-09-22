@@ -533,7 +533,7 @@ var Emphasis = {
 };
 
 $.fn.emphasis = function() {
-    Emphasis.init();  
+    Emphasis.init(this);  
 };
 
 }(jQuery));
