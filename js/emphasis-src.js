@@ -52,11 +52,6 @@ var Emphasis = {
     },
 
     config: function() {
-    /*
-        Eligible Paragraphs
-        This uses some common markup for plain and simple paragraphs - those that are not empty, no classes.
-        We use PrototypeJS for its css selector awesomeness, but your needs might be simpler (getElementsByTagName('p') etc.)
-    */
         this.paraSelctors      = $('#article-content p');
 
     //  Class names
@@ -68,8 +63,8 @@ var Emphasis = {
         this.classActiveAnchor = "emActiveAnchor";
     },
 
+    /**  Inject the minimum styles rules required */
     addCSS: function() {
-    /*  Inject the minimum styles rules required */
         var st = document.createElement('style');
         st.setAttribute('type', 'text/css');
         /* for validation goodness */
@@ -84,8 +79,8 @@ var Emphasis = {
         document.getElementsByTagName("head")[0].appendChild(st);
     },
 
+    /**  Read and interpret the URL hash */
     readHash: function() {
-    /*  Read and interpret the URL hash */
         var lh = decodeURI(location.hash),
           p  = false,
           h = [],
@@ -153,8 +148,8 @@ var Emphasis = {
         this.goHighlight(h, s);
     },
 
+    /**  Look for double-shift keypress */
     keydown: function(e){
-    /*  Look for double-shift keypress */
         var self = Emphasis,
           kc = e.keyCode;
         
@@ -166,8 +161,11 @@ var Emphasis = {
         setTimeout(function(){ self.kh = '|'; }, 500);
     },
 
+    /** 
+     * Build a list of Paragraphs, keys, and add meta-data to each Paragraph
+     * in DOM, saves list for later re-use
+     */
     paragraphList: function() {
-    /*  Build a list of Paragrphs, keys, and add meta-data to each Paragraph in DOM, saves list for later re-use */
         if (this.pl && this.pl.list.length > 0) {
           return this.pl;
         }
@@ -198,8 +196,11 @@ var Emphasis = {
         return this.pl;
     },
 
+    /**
+     * Clicking a Paragraph has consequences for Highlighting, selecting and
+     * changing active Anchor
+     */
     paragraphClick: function(e) {
-    /*  Clicking a Paragrsph has consequences for Highlighting, selecting and changing active Anchor */
         if (!this.vu) { return; }
 
         var hasChanged = false,
@@ -266,8 +267,10 @@ var Emphasis = {
         }
     },
 
+    /**
+     * Toggle anchor links next to Paragraphs
+     */
     paragraphInfo: function(mode) {
-    /*  Toggle anchor links next to Paragraphs */
       var hasSpan, pl, len, i, para, key, isActive, spans;
       
         if (mode) {
@@ -295,15 +298,20 @@ var Emphasis = {
         }
     },
 
+    /**
+     * Make this A tag the one and only Anchor
+     */
     updateAnchor: function(an) {
-    /*  Make this A tag the one and only Anchor */
         this.p = an.getAttribute("data-key");
         $(this).removeClass(this.classActiveAnchor);
         $(an).addClass(this.classActiveAnchor);
     },
 
+    /**
+     * Scan the Paragraphs, note selections, highlights and update the URL with
+     * the new Hash
+     */
     updateURLHash: function() {
-    /*  Scan the Paragraphs, note selections, highlights and update the URL with the new Hash */
         var h     = "h[",
           paras = $('p.emReady'),
           pLen  = paras.length,
@@ -333,8 +341,8 @@ var Emphasis = {
         location.hash = hash;
     },
 
+    /**  From a Paragraph, generate a Key */
     createKey: function(p) {
-    /*  From a Paragraph, generate a Key */
         var key = "",
           len = 6,
           txt = (p.innerText || p.textContent || '').replace(/[^a-z\. ]+/gi, ''),
@@ -357,8 +365,8 @@ var Emphasis = {
         return key;
     },
 
+    /**  From a list of Keys, locate the Key and corresponding Paragraph */
     findKey: function(key) {
-    /*  From a list of Keys, locate the Key and corresponding Paragraph */
         var pl = this.paragraphList(),
           ln = pl.keys.length,
           ix = false,
@@ -382,8 +390,8 @@ var Emphasis = {
         return { index: ix, elm: el };
     },
 
+    /**  Move view to top of a given Paragraph */
     goAnchor: function(p) {
-    /*  Move view to top of a given Paragraph */
         if (!p) {
           return; 
         }
@@ -396,8 +404,8 @@ var Emphasis = {
         }
     },
 
+    /**  Highlight a Paragraph, or specific Sentences within it */
     goHighlight: function(h, s) {
-    /*  Highlight a Paragraph, or specific Sentences within it */
         if (!h) {
           return;
         }
@@ -434,8 +442,10 @@ var Emphasis = {
         }
     },
 
+    /** Break a Paragraph into Sentences, bearing in mind that the "." is not
+     * the definitive way to do so
+     */
     getSentences: function(el) {
-    /*  Break a Paragraph into Sentences, bearing in mind that the "." is not the definitive way to do so */
         var html    = (typeof el==="string") ? el : el.innerHTML,
           mrsList = "Mr,Ms,Mrs,Miss,Msr,Dr,Gov,Pres,Sen,Prof,Gen,Rep,St,Messrs,Col,Sr,Jf,Ph,Sgt,Mgr,Fr,Rev,No,Jr,Snr",
           topList = "A,B,C,D,E,F,G,H,I,J,K,L,M,m,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,etc,oz,cf,viz,sc,ca,Ave,St",
@@ -475,8 +485,11 @@ var Emphasis = {
         return n + (sfx[(val-20)%10] || sfx[val] || sfx[0]);
     },
 
+    /** 
+     * Get the Levenshtein distance - a measure of difference between two
+     * sequences
+     */
     lev: function(a, b) {
-    /*  Get the Levenshtein distance - a measure of difference between two sequences */
         var m = a.length,
           n = b.length,
           r = [],
@@ -496,20 +509,20 @@ var Emphasis = {
         return r[m][n];
     },
 
+    /**  Return smallest of two values */
     smallest: function(x,y,z) {
-    /*  Return smallest of two values */
         if (x < y && x < z) { return x; }
         if (y < x && y < z) { return y; }
         return z;
     },
 
+    /**  Trim whitespace from right of string */
     rtrim: function(txt) {
-    /*  Trim whitespace from right of string */
         return txt.replace(/\s+$/, "");
     },
 
+    /**  Remove empty items from an array */
     cleanArray: function(a){
-    /*  Remove empty items from an array */
         var n = [],
           i;
         for (i = 0; i<a.length; i++){
