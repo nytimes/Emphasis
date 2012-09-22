@@ -52,7 +52,7 @@ var Emphasis = {
     },
 
     config: function() {
-        this.paraSelctors      = $('#article-content p');
+        this.paraSelectors      = $('#article-content p');
 
     //  Class names
         this.classReady        = "emReady";
@@ -173,11 +173,11 @@ var Emphasis = {
           list = [],
           keys = [],
           c    = 0,
-          len  = this.paraSelctors.length,
+          len  = this.paraSelectors.length,
           p, pr, k;
 
         for (p=0; p<len; p++) {
-            pr = this.paraSelctors[p];
+            pr = this.paraSelectors[p];
             if ((pr.innerText || pr.textContent || "").length>0) {
                 k = instance.createKey(pr);
                 list.push(pr);
