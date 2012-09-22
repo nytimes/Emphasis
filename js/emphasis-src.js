@@ -34,10 +34,13 @@
 
     -------------------------------------------------- */
 
-jQuery(function($) {
+(function($) {
+
 var Emphasis = {
-    init: function() {
+    init: function(obj) {
         this.config();
+        this.paraSelectors = obj.find("p");
+
         this.pl = false; // Paragraph List
         this.p  = false; // Paragraph Anchor
         this.h  = false; // Highlighted paragraphs
@@ -52,9 +55,6 @@ var Emphasis = {
     },
 
     config: function() {
-        this.paraSelectors      = $('#article-content p');
-
-    //  Class names
         this.classReady        = "emReady";
         this.classActive       = "emActive";
         this.classHighlight    = "emHighlight";
@@ -530,11 +530,10 @@ var Emphasis = {
         }
         return n;
     }
-
 };
 
-$(window).bind('load', function() {
-  Emphasis.init();  
-});
+$.fn.emphasis = function() {
+    Emphasis.init();  
+};
 
-});
+}(jQuery));
