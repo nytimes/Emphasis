@@ -4,7 +4,7 @@
     by Michael Donohoe (@donohoe)
     https://github.com/NYTimes/Emphasis
     http://open.blogs.nytimes.com/2011/01/10/emphasis-update-and-source/
-    
+
     - - - - - - - - - -
 
     jQueryized by Rob Flaherty (@ravelrumba)
@@ -20,10 +20,10 @@
     to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
     copies of the Software, and to permit persons to whom the Software is
     furnished to do so, subject to the following conditions:
-    
+
     The above copyright notice and this permission notice shall be included in
     all copies or substantial portions of the Software.
-    
+
     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
     IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
     FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -37,21 +37,32 @@
 (function($) {
 
 var Emphasis = {
-    init: function(obj) {
+    init: function(obj, options) {
         this.config();
-        this.paraSelectors = obj.find("p");
-
-        this.pl = false; // Paragraph List
-        this.p  = false; // Paragraph Anchor
-        this.h  = false; // Highlighted paragraphs
-        this.s  = false; // Highlighted sentences
-        this.vu = false; // Are paragraph links visible or not
-        this.kh = "|";
-
+        options = options || {};
+        this.settings = $.extend(this.defaults(obj), options);
         this.addCSS();
         this.readHash();
-        
-        $(document).bind('keydown', this.keydown);                
+
+        $(document).bind('keydown', this.keydown);
+    },
+
+    defaults: function(obj) {
+        return {
+            selector: obj,
+            pl: false, // Paragraph List
+            p: false, // Paragraph Anchor
+            h: false, // Highlighted paragraphs
+            s: false, // Highlighted sentences
+            vu: false, // Are paragraph links visible or not
+            kh: "|",
+            classReady        : "emReady",
+            classActive       : "emActive",
+            classHighlight    : "emHighlight",
+            classInfo         : "emInfo",
+            classAnchor       : "emAnchor",
+            classActiveAnchor : "emActiveAnchor"
+        };
     },
 
     config: function() {
@@ -86,7 +97,7 @@ var Emphasis = {
           h = [],
           s = {},
           a, re, f, r, i, findp, findh, undef, hi, key, pos, b, j;
-          
+
 
         if (lh.indexOf('[')<0 && lh.indexOf(']')<0) {
         /*  Version 1 Legacy support
@@ -142,7 +153,7 @@ var Emphasis = {
             }
         }
 
-        this.p = p; this.h = h; this.s = s;
+        this.settings.p = p; this.settings.h = h; this.settings.s = s;
 
         this.goAnchor(p);
         this.goHighlight(h, s);
@@ -152,32 +163,32 @@ var Emphasis = {
     keydown: function(e){
         var self = Emphasis,
           kc = e.keyCode;
-        
-        self.kh  = self.kh + kc + '|';
-        if (self.kh.indexOf('|16|16|')>-1) {
-            self.vu = (self.vu) ? false : true;
-            self.paragraphInfo(self.vu);
+
+        self.settings.kh  = self.settings.kh + kc + '|';
+        if (self.settings.kh.indexOf('|16|16|')>-1) {
+            self.settings.vu = (self.settings.vu) ? false : true;
+            self.paragraphInfo(self.settings.vu);
         }
-        setTimeout(function(){ self.kh = '|'; }, 500);
+        setTimeout(function(){ self.settings.kh = '|'; }, 500);
     },
 
-    /** 
+    /**
      * Build a list of Paragraphs, keys, and add meta-data to each Paragraph
      * in DOM, saves list for later re-use
      */
     paragraphList: function() {
-        if (this.pl && this.pl.list.length > 0) {
-          return this.pl;
+        if (this.settings.pl && this.settings.pl.list.length > 0) {
+          return this.settings.pl;
         }
         var instance = this,
           list = [],
           keys = [],
           c    = 0,
-          len  = this.paraSelectors.length,
+          len  = this.settings.selector.length,
           p, pr, k;
 
         for (p=0; p<len; p++) {
-            pr = this.paraSelectors[p];
+            pr = this.settings.selector[p];
             if ((pr.innerText || pr.textContent || "").length>0) {
                 k = instance.createKey(pr);
                 list.push(pr);
@@ -192,8 +203,8 @@ var Emphasis = {
             }
         }
 
-        this.pl = { list: list, keys: keys };
-        return this.pl;
+        this.settings.pl = { list: list, keys: keys };
+        return this.settings.pl;
     },
 
     /**
@@ -201,7 +212,7 @@ var Emphasis = {
      * changing active Anchor
      */
     paragraphClick: function(e) {
-        if (!this.vu) { return; }
+        if (!this.settings.vu) { return; }
 
         var hasChanged = false,
           pr = (e.currentTarget.nodeName === "P") ? e.currentTarget : false, // Paragraph
@@ -272,7 +283,7 @@ var Emphasis = {
      */
     paragraphInfo: function(mode) {
       var hasSpan, pl, len, i, para, key, isActive, spans;
-      
+
         if (mode) {
             hasSpan = $('span.' + this.classInfo);
             if (hasSpan.length === 0) {
@@ -282,7 +293,7 @@ var Emphasis = {
                     para = pl.list[i] || false;
                     if (para) {
                         key        = pl.keys[i];
-                        isActive   = (key===this.p) ? (" " + this.classActiveAnchor) : "";
+                        isActive   = (key===this.settings.p) ? (" " + this.classActiveAnchor) : "";
                         para.innerHTML = "<span class='" + this.classInfo + "'><a class='"+ this.classAnchor + isActive + "' href='#p[" + key + "]' data-key='" + key + "' title='Link to " + this.ordinal(i+1) + " paragraph'>&para;</a></span>" + para.innerHTML;
                     }
                 }
@@ -302,7 +313,7 @@ var Emphasis = {
      * Make this A tag the one and only Anchor
      */
     updateAnchor: function(an) {
-        this.p = an.getAttribute("data-key");
+        this.settings.p = an.getAttribute("data-key");
         $(this).removeClass(this.classActiveAnchor);
         $(an).addClass(this.classActiveAnchor);
     },
@@ -336,7 +347,7 @@ var Emphasis = {
             }
         }
 
-        anchor    = ((this.p) ? "p[" + this.p + "]," : "");
+        anchor    = ((this.settings.p) ? "p[" + this.settings.p + "]," : "");
         hash      = (anchor + (h.replace("h[,", "h[") + "]")).replace(",h[]", "");
         location.hash = hash;
     },
@@ -347,7 +358,7 @@ var Emphasis = {
           len = 6,
           txt = (p.innerText || p.textContent || '').replace(/[^a-z\. ]+/gi, ''),
           lines, first, last, k, max, i;
-        
+
         if (txt && txt.length>1) {
 
             lines = this.getSentences(txt);
@@ -393,10 +404,10 @@ var Emphasis = {
     /**  Move view to top of a given Paragraph */
     goAnchor: function(p) {
         if (!p) {
-          return; 
+          return;
         }
         var pg = (isNaN(p)) ? this.findKey(p)['elm'] : (this.paragraphList().list[p-1] || false);
-        
+
         if (pg) {
             setTimeout(function(){
                 $(window).scrollTop($(pg).offset().top);
@@ -458,7 +469,7 @@ var Emphasis = {
           list = (topList+","+geoList+","+numList+","+extList).split(","),
           len  = list.length,
           i, lines;
-        
+
         for (i=0;i<len;i++) {
             html = html.replace(new RegExp((" "+list[i]+"\\."), "g"), (" "+list[i]+d));
         }
@@ -480,12 +491,12 @@ var Emphasis = {
     },
 
     ordinal: function(n) {
-        var sfx = ["th","st","nd","rd"], 
+        var sfx = ["th","st","nd","rd"],
           val = n%100;
         return n + (sfx[(val-20)%10] || sfx[val] || sfx[0]);
     },
 
-    /** 
+    /**
      * Get the Levenshtein distance - a measure of difference between two
      * sequences
      */
@@ -494,9 +505,9 @@ var Emphasis = {
           n = b.length,
           r = [],
           c, o, i, j;
-          
+
           r[0] = [];
-        
+
         if (m < n) { c = a; a = b; b = c; o = m; m = n; n = o; }
         for (c = 0; c < n+1; c++) { r[0][c] = c; }
         for (i = 1; i < m+1; i++) {
@@ -532,8 +543,8 @@ var Emphasis = {
     }
 };
 
-$.fn.emphasis = function() {
-    Emphasis.init(this);  
+$.fn.emphasis = function(options) {
+    Emphasis.init(this, options);
 };
 
 }(jQuery));
