@@ -16,24 +16,24 @@ http://open.blogs.nytimes.com/2011/01/11/emphasis-update-and-source/
 Configuration
 -------------
 
-The main configuration element is specifiying what paragraph elements are in scope and are not. To this end
-we specify the elements on or near Line 54:
+To enable Emphasis on your website, include the Emphasis JS library and call the
+.emphasis method on a paragraph selector.
 
-    this.paraSelctors = $$(
-                        ".entry p:not(p[class]):not(:empty)",
-                        ".post p:not(p[class]):not(:empty)", 
-                        "article p:not(p[class]):not(:empty)"
-                        );
+Simple example:
+$("#article-content p").emphasis();
+
+More comprehensive example:
+$(".entry p:not(p[class]):not(:empty), .post p:not(p[class]):not(:empty), article p:not(p[class]):not(:empty)").emphasis();
 
 This covers a lot of common markup in many sites and blog. However this could be configured for your specific site.
 
 Example: If all your P tags reside in DIV tags with the "entry" classname, then this would be sufficient:
 
-    this.paraSelctors = $$(".entry p:not(p[class]):not(:empty)");
+$(".entry p:not(p[class]):not(:empty)").emphasis();
 
 Over at The New York Times, we use the following:
 
-    this.paraSelctors = $$('.articleBody p:not(p[class]):not(:empty)', '#articleBody p:not(p[class]):not(:empty)', '#content div.entry-content p:not(p[class]):not(:empty)');
+$(".articleBody p:not(p[class]):not(:empty), #articleBody p:not(p[class]):not(:empty), #content div.entry-content p:not(p[class]):not(:empty)").emphasis();
 
 Dependencies
 ------------
