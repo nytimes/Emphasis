@@ -56,6 +56,8 @@ var Emphasis = {
             s: false, // Highlighted sentences
             vu: false, // Are paragraph links visible or not
             kh: "|",
+            kc : '16', // The keyboard key that triggers emphasis
+            kcCount: 2, // Number of times trigger key must be pressed
             classReady        : "emReady",
             classActive       : "emActive",
             classHighlight    : "emHighlight",
@@ -161,11 +163,22 @@ var Emphasis = {
 
     /**  Look for double-shift keypress */
     keydown: function(e){
-        var self = Emphasis,
-          kc = e.keyCode;
+        var self = Emphasis;
 
-        self.settings.kh  = self.settings.kh + kc + '|';
-        if (self.settings.kh.indexOf('|16|16|')>-1) {
+        self.settings.kh  = self.settings.kh + e.keyCode + '|';
+
+        // If an invalid value for kcCount is set, default to 2.
+        if (self.settings.kcCount <= 0){
+            self.settings.kcCount = 2;
+        }
+
+        // Determine the key pattern that should trigger Emphasis.
+        var search_string = '|';
+        for (i = 0; i <= self.settings.kcCount - 1; i++) {
+            search_string += self.settings.kc + '|';
+        }
+
+        if (self.settings.kh.indexOf(search_string) >-1 ) {
             self.settings.vu = (self.settings.vu) ? false : true;
             self.paragraphInfo(self.settings.vu);
         }
@@ -213,6 +226,9 @@ var Emphasis = {
      */
     paragraphClick: function(e) {
         if (!this.settings.vu) { return; }
+
+        // Let other scripts react.
+        $.event.trigger('emphasisParagraphClick', [this]);
 
         var hasChanged = false,
           pr = (e.currentTarget.nodeName === "P") ? e.currentTarget : false, // Paragraph
@@ -349,7 +365,12 @@ var Emphasis = {
 
         anchor    = ((this.settings.p) ? "p[" + this.settings.p + "]," : "");
         hash      = (anchor + (h.replace("h[,", "h[") + "]")).replace(",h[]", "");
-        location.hash = hash;
+        if (location.hash != hash) {
+            location.hash = hash;
+            $.event.trigger('emphasisHashUpdated', [this]);
+        }
+
+
     },
 
     /**  From a Paragraph, generate a Key */
