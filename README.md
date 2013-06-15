@@ -22,39 +22,44 @@ To enable Emphasis on your website, include the Emphasis JS library and call the
 ### Custom selectors
 
 Simple example:
-$("#article-content p").emphasis();
+
+    $("#article-content p").emphasis();
 
 More comprehensive selector example:
-$(".entry p:not(p[class]):not(:empty), .post p:not(p[class]):not(:empty), article p:not(p[class]):not(:empty)").emphasis();
+
+    $(".entry p:not(p[class]):not(:empty), .post p:not(p[class]):not(:empty), article p:not(p[class]):not(:empty)").emphasis();
 
 This covers a lot of common markup in many sites and blog. However this could be configured for your specific site.
 
 Example: If all your P tags reside in DIV tags with the "entry" classname, then this would be sufficient:
 
-$(".entry p:not(p[class]):not(:empty)").emphasis();
+    $(".entry p:not(p[class]):not(:empty)").emphasis();
 
 Over at The New York Times, we use the following:
 
-$(".articleBody p:not(p[class]):not(:empty), #articleBody p:not(p[class]):not(:empty), #content div.entry-content p:not(p[class]):not(:empty)").emphasis();
+    $(".articleBody p:not(p[class]):not(:empty), #articleBody p:not(p[class]):not(:empty), #content div.entry-content p:not(p[class]):not(:empty)").emphasis();
 
 ### Custom options
 
 In this example, 'ctrl' must be pressed once to trigger Emphasis:
-$("#article-content p").emphasis({kc: 17, kcCount : 1});
+
+    $("#article-content p").emphasis({kc: 17, kcCount : 1});
 
 ### Emphasis jQuery triggers
 
 Emphasis triggers custom jQuery events, to which your custom jQuery script may react.
 
-// React to emphasis-enabled paragraph being clicked.
-$(document).bind('emphasisParagraphClick', function(event, emphasis) {
-  alert('You clicked an Emphasis enabled paragraph!');
-});
+React to emphasis-enabled paragraph being clicked.
 
-// React to Emphasis changing hash.
-$(document).bind('emphasisHashUpdated', function(event, emphasis) {
-  alert('Emphasis has updated the URL hash to ' + window.location.hash);
-});
+    $(document).bind('emphasisParagraphClick', function(event, emphasis) {
+      alert('You clicked an Emphasis enabled paragraph!');
+    });
+
+React to Emphasis changing hash.
+
+    $(document).bind('emphasisHashUpdated', function(event, emphasis) {
+      alert('Emphasis has updated the URL hash to ' + window.location.hash);
+    });
 
 
 Dependencies
