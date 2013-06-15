@@ -14,13 +14,12 @@ For more information and examples please go to this blog post:
 http://open.blogs.nytimes.com/2011/01/11/emphasis-update-and-source/
 
 Configuration
-==============
+---------------
 
 To enable Emphasis on your website, include the Emphasis JS library and call the
 .emphasis method on a paragraph selector.
 
-Custom selectors
-----------------
+### Custom selectors
 
 Simple example:
 $("#article-content p").emphasis();
@@ -38,14 +37,12 @@ Over at The New York Times, we use the following:
 
 $(".articleBody p:not(p[class]):not(:empty), #articleBody p:not(p[class]):not(:empty), #content div.entry-content p:not(p[class]):not(:empty)").emphasis();
 
-Custom options
----------------
+### Custom options
 
 In this example, 'ctrl' must be pressed once to trigger Emphasis:
 $("#article-content p").emphasis({kc: 17, kcCount : 1});
 
-Emphasis jQuery Triggers
--------------------------
+### Emphasis jQuery triggers
 
 Emphasis triggers custom jQuery events, to which your custom jQuery script may react.
 
@@ -61,18 +58,18 @@ $(document).bind('emphasisHashUpdated', function(event, emphasis) {
 
 
 Dependencies
-==============
+------------
 
 jQuery (Tested with 1.4.4)
 
 Thanks
-==============
+------------
 
 Levenshtein calculation in the script is based on some nice code by Andrew Hedges
 http://andrew.hedges.name/experiments/levenshtein/
 
 To-Do
-==============
+------------
 
  - Further work on UI for highlighting with focus on simplicity
  - Social
