@@ -1,10 +1,7 @@
-Prologue
-========
-
-Emphasis, with patient help, has moved from its dependency on PrototypeJS to jQuery.
-
 Emphasis
 ========
+
+Now with 100% less jQuery.
 
 Emphasis provides dynamic paragraph-specific anchor links and the ability to highlight text in a document,
 all of which is made available in the URL hash so it can be emailed, bookmarked, or shared.
@@ -12,8 +9,6 @@ all of which is made available in the URL hash so it can be emailed, bookmarked,
 For more information and examples please go to this blog post:
 
 http://open.blogs.nytimes.com/2011/01/11/emphasis-update-and-source/
-
-The latest version of Emphasis no longer requires jQuery.
 
 Configuration
 -------------
