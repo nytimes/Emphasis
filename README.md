@@ -22,11 +22,11 @@ This covers a lot of common markup in many sites and blog. However this could be
 
 Example: If all your P tags reside in DIV tags with the "entry" classname, then this would be sufficient:
 
-    this.paraSelctors = document.querySelectorAll(".entry p:not(p[class]):not(:empty)");
+    this.paraSelctors = document.querySelectorAll(".entry p");
 
 Over at The New York Times, we'd use the following:
 
-    this.paraSelctors = document.querySelectorAll('.articleBody p:not(p[class]):not(:empty)', '#articleBody p:not(p[class]):not(:empty)', '#content div.entry-content p:not(p[class]):not(:empty)');
+    this.paraSelctors = document.querySelectorAll('#story-body > p');
 
 Usage
 -----
