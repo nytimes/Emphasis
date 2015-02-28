@@ -13,32 +13,32 @@ For more information and examples please go to this blog post:
 
 http://open.blogs.nytimes.com/2011/01/11/emphasis-update-and-source/
 
+The latest version of Emphasis no longer requires jQuery.
+
 Configuration
 -------------
 
-The main configuration element is specifiying what paragraph elements are in scope and are not. To this end
+The main configuration element is specifying what paragraph elements are in scope and are not. To this end
 we specify the elements on or near Line 54:
 
-    this.paraSelctors = $$(
-                        ".entry p:not(p[class]):not(:empty)",
-                        ".post p:not(p[class]):not(:empty)", 
-                        "article p:not(p[class]):not(:empty)"
-                        );
+    this.paraSelctors = document.querySelectorAll('#article p');
 
 This covers a lot of common markup in many sites and blog. However this could be configured for your specific site.
 
 Example: If all your P tags reside in DIV tags with the "entry" classname, then this would be sufficient:
 
-    this.paraSelctors = $$(".entry p:not(p[class]):not(:empty)");
+    this.paraSelctors = document.querySelectorAll(".entry p:not(p[class]):not(:empty)");
 
-Over at The New York Times, we use the following:
+Over at The New York Times, we'd use the following:
 
-    this.paraSelctors = $$('.articleBody p:not(p[class]):not(:empty)', '#articleBody p:not(p[class]):not(:empty)', '#content div.entry-content p:not(p[class]):not(:empty)');
+    this.paraSelctors = document.querySelectorAll('.articleBody p:not(p[class]):not(:empty)', '#articleBody p:not(p[class]):not(:empty)', '#content div.entry-content p:not(p[class]):not(:empty)');
 
-Dependencies
-------------
+Usage
+-----
 
-jQuery (Tested with 1.4.4)
+Once up and running, a reader can double tap the SHIFT key to show the Paragraph links.
+Once in this mode they can toggle links and highlighting on a sentence level
+
 
 Thanks
 ------
