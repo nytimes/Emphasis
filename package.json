@@ -1,0 +1,19 @@
+{
+  "name": "Emphasis",
+  "version": "1.0.0",
+  "description": "Dynamic paragraph-specific anchor links and the ability to highlight text in any web page",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NYTimes/Emphasis.git"
+  },
+  "author": "Michael Donohoe <donohoe@gmail.com> (http://donohoe.io/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/NYTimes/Emphasis/issues"
+  },
+  "homepage": "https://github.com/NYTimes/Emphasis"
+}
